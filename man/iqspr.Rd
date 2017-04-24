@@ -39,4 +39,3 @@ smchem$smcexec(niter=5, preorder=0, nview=4)
 smiles <- get_smiles(smchem)
 predict(qsprpred_EG_5k, smiles[1:5]) 
 }
-

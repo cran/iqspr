@@ -2,8 +2,8 @@
 % Please edit documentation in R/Esmi.R
 \docType{class}
 \name{Esmi-class}
-\alias{Esmi}
 \alias{Esmi-class}
+\alias{Esmi}
 \title{Extend smi class}
 \description{
 Extend smi class

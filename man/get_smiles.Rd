@@ -21,4 +21,3 @@ smcexec(smchem, niter=5, preorder=0, nview=4)
 get_smiles(smchem)
 
 }
-

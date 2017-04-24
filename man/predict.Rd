@@ -19,4 +19,3 @@ data(qsprpred_EG_5k)
 predict(qsprpred_EG_5k, c("c1ccccc1O", "c1ccccc1F"))
 
 }
-

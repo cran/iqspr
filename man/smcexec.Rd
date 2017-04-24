@@ -30,4 +30,3 @@ smcexec(smchem, niter=5, preorder=0, nview=4)
 #smcexec(smchem, niter=100, preorder=0.2, nview=4)
 #see http://openbabel.org
 }
-

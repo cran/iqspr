@@ -2,8 +2,8 @@
 % Please edit documentation in R/SmcChem.R
 \docType{class}
 \name{SmcChem-class}
-\alias{SmcChem}
 \alias{SmcChem-class}
+\alias{SmcChem}
 \title{SMC chemical generator class}
 \description{
 SMILES generator with Sequence Monte Calro sampler
@@ -21,6 +21,7 @@ SMILES generator with Sequence Monte Calro sampler
 
 \item{\code{v_decay}}{numeric value decaying temparature for the target distribution in SMC sampler}
 }}
+
 \section{Methods}{
 
 \describe{
@@ -36,6 +37,7 @@ SMILES generator with Sequence Monte Calro sampler
 
 \item{\code{viewstr(idx)}}{view 2D structures from SMILES string vector with index idx (same as viewstr function) }
 }}
+
 \examples{
 #sample data
 data(qspr.data)
@@ -79,4 +81,3 @@ smiles <- get_smiles(smchem)
 predict(qsprpred_EG_5k, smiles[1:5])
 
 }
-

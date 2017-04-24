@@ -2,8 +2,8 @@
 % Please edit documentation in R/QSPRpred.R
 \docType{class}
 \name{QSPRpred-class}
-\alias{QSPRpred}
 \alias{QSPRpred-class}
+\alias{QSPRpred}
 \title{QSPRpredictor class}
 \description{
 QSPR model construction using the Bayesian linear regression model.
@@ -19,6 +19,7 @@ QSPR model construction using the Bayesian linear regression model.
 
 \item{\code{fpnames}}{name of fingerprint used in a predictor}
 }}
+
 \section{Methods}{
 
 \describe{
@@ -32,6 +33,7 @@ QSPR model construction using the Bayesian linear regression model.
 
 \item{\code{set_targety(v_ymin, v_ymax)}}{set the target propety range}
 }}
+
 \examples{
 data(qspr.data)
 smis <- paste(qspr.data[,1])
@@ -68,4 +70,3 @@ qsprpred_EG_5k$ymin <- c(200, 5.5)
 # method inverse_predx returns the probability that input SMILES has property in target range
 qsprpred_EG_5k$inverse_predx("c1ccccc1O")
 }
-

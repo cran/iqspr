@@ -26,4 +26,3 @@ res <- get_hiscores(smchem, exsim=0.8)
 viewstr(res[1:4, 1])
 
 }
-

@@ -26,4 +26,3 @@ smiles <- genENgram(4, engram_5k, 10)
 viewstr(smiles)
 
 }
-

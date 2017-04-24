@@ -2,8 +2,8 @@
 % Please edit documentation in R/ENgram.R
 \docType{class}
 \name{ENgram-class}
-\alias{ENgram}
 \alias{ENgram-class}
+\alias{ENgram}
 \title{Extended N-gram model for leraning SMILES strings}
 \description{
 Extended N-gram model for leraning SMILES strings
@@ -15,6 +15,7 @@ Extended N-gram model for leraning SMILES strings
 
 \item{\code{update_mat(data)}}{update the model with additional SMILES strings data}
 }}
+
 \examples{
 data(trainedSMI)
 data(engram_5k)  #same as run => engram <- ENgram$new(trainedSMI, order=10)
@@ -24,4 +25,3 @@ data(engram_5k)  #same as run => engram <- ENgram$new(trainedSMI, order=10)
 #-----arguments
 
 }
-

@@ -17,4 +17,3 @@ viewstr(c("c1ccc2ccc3c(NCCN(C)C)cc(nc3c2c1)", "c1ccc2ccc3c(NCCN(CC)CCCl)cc(nc3c2
  "c1ccc2ccc3c(NC(CC)CC)cc(nc3c2c1)", "c1ccc2ccc3c(c2c1)ncc(c3NCCNCC=CCCCC)"))
 
 }
-
