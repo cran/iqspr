@@ -1,16 +1,18 @@
 #'generate SMILES strings from extended N-gram model
-#' @description generate SMILES strings from extended N-gram model
-#' @param nsmis number of generating SMILES strings
-#' @param engram ENgram object
-#' @param order n in ENgram model
-#' @param gentype Back-off procedure with "ML" option and Neaser-Nay smoothing with "KN" option
-#' @param crange range in the length of output SMILES strings
-#' @examples data(engram_5k)
+#' @description Generate SMILES strings from an extended N-gram model
+#' @param nsmis is the number of SMILES strings to generate
+#' @param engram is an ENgram object
+#' @param order n in the ENgram model
+#' @param gentype is the type of the procedure used by the SMILES strings generator. For a Back-off procedure, use "ML" (by default),
+#' and for a Neaser-Nay smoothing procedure, use "KN".
+#' @param crange is the range of lengths, defined in a colum vector, required for the output SMILES strings (from 5 to 10 characters
+#' by default)
+#' @examples \dontrun{data(engram_5k)
 #' smiles <- genENgram(4, engram_5k, 10)
-#' viewstr(smiles)
+#' viewstr(smiles)}
 #'
-#' @export  genENgram 
-genENgram <- function(nsmis, engram, order, gentype="ML", crange=c(10, 100)){
+#' @export  genENgram
+genENgram <- function(nsmis, engram, order, gentype="ML", crange=c(5, 10)){
   res <- character(nsmis)
   for(i in 1:nsmis){
     cat("\r", i, "th molecules generated")

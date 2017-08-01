@@ -4,9 +4,9 @@
 \name{ENgram-class}
 \alias{ENgram-class}
 \alias{ENgram}
-\title{Extended N-gram model for leraning SMILES strings}
+\title{Extended N-gram model for learning SMILES strings}
 \description{
-Extended N-gram model for leraning SMILES strings
+Extended N-gram model for learning SMILES strings
 }
 \section{Methods}{
 

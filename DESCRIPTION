@@ -1,24 +1,27 @@
 Package: iqspr
-Type: Package
-Title: Generate Chemical Strings (SMILES) with the Inverse QSPR Model
-Version: 1.1
-Date: 2017-4-23
-Author: Hisaki Ikebata
-Maintainer: Ryo Yoshida <yoshidar@ism.ac.jp>
-Description: Generate chemical structures possibly satisfying desired properties
- using the inverse QSPR model. It has three reference classes. ENgram is a class for learning the grammar 
- structure of existing chemical strings using an extended N-gram model. QSPRpred contains 
- a simple Bayes regression model to predict properties from structures. SmcChem is a class of the generator of
- chemical strings from the Inverse-QSPR model. This class has ENgram and QSPRpred class objects inside. 
- The generator is implemented by the Sequential Monte Carlo sampler. 
-License: Artistic-2.0
-SystemRequirements: OpenBabel (>= 2.3.1) with headers.
-        http://openbabel.org
-Suggests: testthat
-Depends: R (>= 2.10), rcdk
-Imports: methods
-RoxygenNote: 6.0.1
+Title: Inverse Molecular Design
+Version: 2.3
+Author: Guillaume Lambard [aut, cre],
+        Hisaki Ikebata [cre],
+        Ryo Yoshida [cre]
+Maintainer: Guillaume Lambard <lambard@ism.ac.jp>
+Description: Autonomous generation of novel organic compounds with target physicochemical properties 
+ initially constrained by the user. This package has the ambition to become an unavoidable tool in the innovation of novel 
+ materials and/or drugs with specific target properties. 
+Depends: R (>= 3.3.3), fingerprint (>= 3.5.4), rcdk (>= 3.3.8)
+Imports: methods, glmnet (>= 2.0-5), kernlab (>= 0.9-25), ranger (>=
+        0.6.0), xgboost (>= 0.6-4), doParallel (>= 1.0.10), tictoc(>=
+        1.0), ggplot2(>= 2.2.1), gridExtra(>= 2.2.1),
+        rBayesianOptimization(>= 1.1.0)
+License: MIT + file LICENSE
+SystemRequirements: JAVA JDK 1.7 or higher for rcdk, OpenBabel (>=
+        2.3.1) with headers, http://openbabel.org
+Suggests: knitr, rmarkdown
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1.9000
 NeedsCompilation: no
-Packaged: 2017-04-23 11:44:14 UTC; hisaki
+VignetteBuilder: knitr
+Packaged: 2017-07-31 01:11:35 UTC; guillaumelambard
 Repository: CRAN
-Date/Publication: 2017-04-24 06:02:52 UTC
+Date/Publication: 2017-08-01 04:43:40 UTC

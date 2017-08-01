@@ -4,24 +4,42 @@
 \name{SmcChem-class}
 \alias{SmcChem-class}
 \alias{SmcChem}
-\title{SMC chemical generator class}
-\description{
-SMILES generator with Sequence Monte Calro sampler
+\title{SMILES generator}
+\arguments{
+\item{smis}{is an initial vector of SMILES from which the generation of novel SMILES begins.}
+
+\item{v_engram}{is an Engram object, \emph{a priori} created, encapsulating the SMILES grammar
+(see \code{\link{ENgram}} for more details).}
+
+\item{v_m}{is a positive scalar representing the order of a used ENgram model for generation.}
+
+\item{v_qsprpred}{is a QSPRpred object in which a regression model, initially trained, is accessible for properties
+predictions (i.e. physico-chemical properties here) of compounds from newly created SMILES.}
+
+\item{v_temp}{is a vector of numerical values, with a length equals to the number of properties, which represents
+the annealing parametrization in the sequential Monte-Carlo sampler.}
+
+\item{v_decay}{is a positive scalar corresponding to the decay rate of temp above (\eqn{temp_{i+1}=temp_{i}^decay}).}
+
+\item{v_ESSth}{is a positive scalar representing the threshold from which a re-sampling over the set of newly created SMILES is
+done (0.5 by default). This threshold limits the degeneracy in the set of newly created SMILES. A lower (higher) value allows
+more (less) degeneracy.}
+
+\item{gentype}{is the type of the procedure used by the SMILES strings generator. For a Back-off procedure, use "ML"
+(by default), and for a Neaser-Nay smoothing procedure, use "KN".}
+
+\item{v_maxstock}{is the maximum of newly created SMILES kept in stock (2000 by default).}
+
+\item{keeptrack}{is set to TRUE by default. It allows the tracking of the mean of predicted properties, and thus the plotting
+and/or listing of the latest newly created SMILES during the generation process. It is extremely useful in order to tune the
+annealing parameters, as to visualize the convergence speed to a targeted physico-chemical properties space.}
+
+\item{smidatabase}{is a vector of known SMILES to which the generated SMILES should not match. This is useful to avoid the creation
+of SMILES with great similarity with existing and/or un-wanted ones.}
 }
-\section{Fields}{
-
-\describe{
-\item{\code{qsprpred}}{QSPRpred object}
-
-\item{\code{engram}}{ENgram object}
-
-\item{\code{m}}{numeric value representing the order of extended N-gram model}
-
-\item{\code{v_ESSth}}{numeric value representing the threshold which resample is done when ESS is less than 100 * v_ESSth}
-
-\item{\code{v_decay}}{numeric value decaying temparature for the target distribution in SMC sampler}
-}}
-
+\description{
+SMILES generator thanks to a sequential Monte-Carlo sampler
+}
 \section{Methods}{
 
 \describe{
@@ -29,9 +47,9 @@ SMILES generator with Sequence Monte Calro sampler
 
 \item{\code{get_smiles()}}{get SMILES strings from the SmcChem object (same as get_smiles function) }
 
-\item{\code{initialize(smis = NULL, v_engram = NULL, v_qsprpred = NULL, v_m = NULL,
-  temp = 1, ESSth = 0.5, lambda = 0, decay = 0.95, gentype = "ML",
-  maxstock = 2000)}}{Initialize the SMC chemical generator with initial SMILES strings smis, ENgram class object v_engram and QSPRpred class object v_qsprpred}
+\item{\code{initialize(smis = NULL, v_engram = NULL, v_m = NULL, v_qsprpred = NULL,
+  v_temp = c(1, 1), v_decay = 0.95, v_ESSth = 0.5, gentype = "ML",
+  v_maxstock = 2000, keeptrack = TRUE, smidatabase = NULL)}}{Initialize the SMC chemical generator with initial SMILES strings smis, ENgram class object v_engram and QSPRpred class object v_qsprpred}
 
 \item{\code{smcexec(niter, nsteps = 5, preorder = 0, nview = 0)}}{modify chemical structures with niter SMC updates}
 
@@ -39,7 +57,7 @@ SMILES generator with Sequence Monte Calro sampler
 }}
 
 \examples{
-#sample data
+\dontrun{#sample data
 data(qspr.data)
 idx <- sample(nrow(qspr.data), 5000)
 smis <- paste(qspr.data[idx,1])
@@ -53,31 +71,22 @@ data(engram_5k)  #same as run => engram <- ENgram$new(trainedSMI, order=10)
 data(qsprpred_EG_5k)
 #same as run => qsprpred <- QSPRpred$new(smis=smis, y=as.matrix(y), v_fpnames="graph")
 
-#set target range 
-qsprpred_EG_5k$ymin <- c(200, 1.5)
-qsprpred_EG_5k$ymax <- c(350, 2.5)
+#set target range
+targ.min <- c(200,1.5)
+targ.max <- c(350,2.5)
+qsprpred_EG_5k$set_target(targ.min,targ.max)
 
 #getting chemical strings from the Inverse-QSPR model
 smchem <- SmcChem$new(smis = rep("c1ccccc1O", 25), v_qsprpred=qsprpred_EG_5k,
                      v_engram=engram_5k,temp=3)
-#-----arguments
-#smis: initial SMILES strings in SMC sampler
-#v_qsprpred: QSPRpred object 
-#v_engram: ENgram object
-#v_m: numeric value representing the order of modified N-gram model
-#ESSth: numeric resampling threshold at 100 * v_ESSth
-#temp: numeric, annealing parameter in SMC sampler
-#lambda: numeric 
-#decay: numeric, decaying rate for temparature 
-#-----arguments
-                
+
 smchem$smcexec(niter=5, preorder=0, nview=4)
-#if OpenBabel (>= 2.3.1) is installed, you can use reordering for better mixing as 
+#if OpenBabel (>= 2.3.1) is installed, you can use reordering for better mixing as
 #smchem$smcexec(niter=100, preorder=0.2, nview=4)
 #see http://openbabel.org
 
 #check
-smiles <- get_smiles(smchem)
-predict(qsprpred_EG_5k, smiles[1:5])
+gensmis <- smchem$get_hiscores(nsmi=5, exsim=0.9)
+pred <- qsprpred_EG_5k$qspr_predx(gensmis[,1])}
 
 }

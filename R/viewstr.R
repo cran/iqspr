@@ -1,24 +1,33 @@
 #'view 2D structures from SMILES string vector
-#' @description view 2D structures from SMILES string vector
-#' @param smis SMILES string vector
+#' @description View 2D structures from SMILES strings vector
+#' @param smis is a SMILES strings vector to submit.
+#' @param width of the picture
+#' @param height of the picture
+#' @param nrow is the number of rows for the table of molecular depictions
+#' @param ncol is the number of columns for the table of molecular depictions
+#' @param legend is the text to appear for each molecular depiction in the top left corner
 #'
 #' @examples viewstr(c("c1ccc2ccc3c(NCCN(C)C)cc(nc3c2c1)", "c1ccc2ccc3c(NCCN(CC)CCCl)cc(nc3c2c1)",
 #'  "c1ccc2ccc3c(NC(CC)CC)cc(nc3c2c1)", "c1ccc2ccc3c(c2c1)ncc(c3NCCNCC=CCCCC)"))
-#' 
+#'
+#' @return a plot of requested 2D structures.
+#'
+#' @importFrom graphics par
+#' @importFrom utils packageVersion
+#' @import rcdk
+#'
 #' @export viewstr
-viewstr <- function(smis){
-  mols <- parse.smiles(smis, kekulise=F)
-  img <- lapply(mols, function(x) view.image.2d(x, width = 250, height = 250))
-  n <- length(img)
-  nn <- trunc(sqrt(n-0.1^5),0)+1
-  plot(1:5, xlim=c(0,nn), ylim=c(0,nn), type="n", axes = F, ann=F)
-  for(i in 0:nn){
-    abline(h=i, lty=3)
-    abline(v=i, lty=3)
-  }
-  for(i in 1:length(img)){
-    d1 <- (i-1) %% nn
-    d2 <- nn- trunc((i-1)/nn, 0) - 1
-    rasterImage(img[[i]], d1+0.05 ,d2+0.05 ,d1+0.95,d2+0.95)
+
+viewstr <- function(smis = NULL, width = 500, height = 500, nrow = 2, ncol = 2, legend = ""){
+  par(mar = c(0,0,0,0))
+  par(mfrow = c(nrow,ncol))
+  smisl <- length(smis)
+  for(i in 1:smisl){
+    mol <- parse.smiles(as.character(smis[i]), kekulise = T)[[1]] # if kekulise = F, aromatic rings are missed!
+    dep <- get.depictor(width=width, height=height, zoom=3)
+    temp <- view.image.2d(molecule=mol,depictor=dep)
+    plot(NA,NA,xlim=c(1,10),ylim=c(1,10),xaxt='n',yaxt='n',xlab='',ylab='')
+    rasterImage(temp,1,1,10,10)
+    legend("topleft", legend[i], bty = "n", cex = 1.3)
   }
 }

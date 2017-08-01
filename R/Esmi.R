@@ -217,7 +217,7 @@ Esmi <- setRefClass(
         return(probNN)
       }else{
         probNN <- pnc[[1]]
-        return(probNN/sum(probNN))
+        return((probNN/sum(probNN)))
       }
     },
     

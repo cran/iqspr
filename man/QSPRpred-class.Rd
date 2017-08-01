@@ -4,69 +4,163 @@
 \name{QSPRpred-class}
 \alias{QSPRpred-class}
 \alias{QSPRpred}
-\title{QSPRpredictor class}
+\title{QSPRpred class}
+\arguments{
+\item{smis}{is a list of vectors of SMILES from which a regression model will be trained, or for which targeted properties will be predicted.}
+
+\item{prop}{is a list of vectors/matrices of available targeted physico-chemical properties for the training dataset.}
+
+\item{v_filterfunc}{defines the filtering function (NULL by default) to use in the computation of properties to filter.}
+
+\item{v_filtermin}{is a vector representing the expected minimal value for each filtered property.}
+
+\item{v_filtermax}{is a vector representing the expected maximal value for each filtered property.}
+
+\item{v_fnames}{is a vector, or a list of vectors, of fingerprints and/or physical descriptors types used as features for each regression model
+(see \code{\link{get_descriptor}} for an exhaustive list of available descriptors).}
+
+\item{v_scale}{sets (FALSE by default) the scaling of physical descriptors only (i.e. continuous features) - mean = 0, standard deviation = 1.}
+
+\item{v_func}{defines the analytic function (NULL by default), or a list of analytic functions, to use in the computation of a subsequent property, or properties respectively.
+A given function will return a new property computed analytically via a list of known properties in prop. This is particularly
+useful when data and regression models can be stated for some properties (e.g. A and B), but not for a targeted property of
+interest (e.g. A+B, A/B, etc.) for which constrains are defined via the \emph{set_target} method.}
+
+\item{v_func_args}{is a vector, or a list of vectors, of integers that tags the used properties in prop for the computation of a subsequent property.
+For example, v_func=list(func1,func2), where func1 and func2 are \emph{a priori} defined functions, and prop=list(V1,M23), where
+V1 is a numerical vector and M23 is a two columns matrix. In this case, v_func_args=list(c(1,3),c(2)), i.e. the function func1
+uses the 1st and 3rd output properties located in prop, and func2 uses the 2nd only. Therefore, the defined empirical functions
+know where to find their inputs.}
+
+\item{kekulise}{enables (FALSE by default) electron checking and allows for parsing of incorrect SMILES (see \code{\link[rcdk]{parse.smiles}}).}
+
+\item{model}{is the name of a regression model to be used (see \code{\link{get_Models}} for an exhaustive list).}
+
+\item{params}{is a list of parameters to submit to a given regression model (see \code{\link{get_Model_params}} for
+examples).}
+
+\item{n_boot}{is the number of requested bootstrap datasets (1 by default) in the training process. This is used for
+an estimation of the means and standard deviations of subsequent non-Bayesian predictions. A higher number of bootstrap
+datasets will allow more accuracy in this estimation. However, it exists a trade-off between accuracy and computation
+time that the user has to figure out. Consequently, in order to ease the bootstrap analysis, a parallelization
+capability is implemented.}
+
+\item{s_boot}{is the proportion of input data (0.85 by default), defined in ]0,1], used to construct bootstrap datasets.}
+
+\item{r_boot}{allows (FALSE by default) the sampling in a bootstrap analysis to be performed with replacement.}
+
+\item{parallelize}{allows (FALSE by default) to use the full computational capability of a user's machine for a bootstrap analysis.
+Indeed, N-1 cores, with N the total number of cores available on the machine, will be used.}
+
+\item{v_propmin}{is a vector representing the expected minimal value for each targeted property.}
+
+\item{v_propmax}{is a vector representing the expected maximal value for each targeted property.}
+
+\item{temp}{is a vector/matrix of numerical values which sets the initial temperatures in the annealing process for the
+sequential Monte-Carlo sampler (see \code{vignette("tutorial", package = "iqspr")} for details).}
+}
 \description{
-QSPR model construction using the Bayesian linear regression model.
+Quantitative Structure-Properties Relationship (QSPR) model construction. This class contains all the required
+functions to train linear and non-linear models, to produce bootstrap datasets for variance estimation, and to provide prediction
+capabilities over a matrix or vector of studied properties.
 }
 \section{Fields}{
 
 \describe{
-\item{\code{ymin}}{vector representing minimal value in each target property}
+\item{\code{propndim}}{is the number of properties received as input data.}
 
-\item{\code{ymax}}{vector representing maximum value in each target property}
+\item{\code{propmin}}{is a vector representing the expected minimal value for each targeted property.}
 
-\item{\code{descriptor}}{function transforming SMILES strings into numeric vector (matrix)}
+\item{\code{propmax}}{is a vector representing the expected maximal value for each targeted property.}
 
-\item{\code{fpnames}}{name of fingerprint used in a predictor}
+\item{\code{filtermin}}{is a vector representing the expected minimal value for each filtered property.}
+
+\item{\code{filtermax}}{is a vector representing the expected maximal value for each filtered property.}
+
+\item{\code{filterfunc}}{is a function to compute the properties to filter.}
+
+\item{\code{X}}{is the nxd matrix, with d features for n input SMILES, returned by \code{\link{get_descriptor}}.}
+
+\item{\code{Y}}{is a nxp matrix of p properties for n input SMILES.}
+
+\item{\code{fnames}}{is a list of vectors of fingerprints and/or physical descriptors types used as features in each regression model by
+\code{\link{get_descriptor}}.}
+
+\item{\code{mdesc}}{is a scalar or vector of means used for physical descriptors scaling, returned by \code{\link{get_descriptor}}.}
+
+\item{\code{sddesc}}{is a scalar or vector of standard deviations used for physical descriptors scaling, returned by \code{\link{get_descriptor}}.}
+
+\item{\code{scale}}{tags the scaling statement (TRUE or FALSE) of the physical descriptors only (i.e. continuous features) - mean = 0, standard deviation = 1.}
+
+\item{\code{func}}{defines the analytic function to use in the computation of a subsequent property.}
+
+\item{\code{func_args}}{is a vector of integers that tags the used columns in the property array prop for the computation of a subsequent property.}
+
+\item{\code{trmodel}}{is the name of the used regression model for training and predictions.}
+
+\item{\code{trnboot}}{is the number of bootstrap dataset used for the training.}
+
+\item{\code{trndf}}{is the number of input SMILES, i.e. the number of degrees of freedom, available in the training of the regression process.}
 }}
 
 \section{Methods}{
 
 \describe{
-\item{\code{initialize(smis = NULL, y = NULL, v_ymin = NULL, v_ymax = NULL,
-  v_descriptor = NULL, v_fpnames = NULL, w0 = NULL, V0_inv = NULL,
-  a0 = NULL, b0 = NULL)}}{initialize the QSPR predictor}
+\item{\code{get_features()}}{returns a list of nxd matrix X with d features for n input SMILES}
 
-\item{\code{inverse_predx(smis = NULL, temp = 1)}}{Inverse QSPR prediction of input SMILES strings smis for target property range}
+\item{\code{get_props()}}{returns a list of nxp matrix Y of p properties for n input SMILES}
 
-\item{\code{qspr_predx(smis = NULL)}}{QSPR prediction of input SMILES strings smis}
+\item{\code{init_env(smis = NULL, prop = matrix(0), v_filterfunc = NULL,
+  v_filtermin = NULL, v_filtermax = NULL, v_fnames = NULL,
+  v_scale = FALSE, v_func = NULL, v_func_args = NULL, kekulise = F)}}{initialize the QSPR predictor: implicitly called via the QSPRpred$new() method}
 
-\item{\code{set_targety(v_ymin, v_ymax)}}{set the target propety range}
+\item{\code{iqspr_predict(smis = NULL, temp = c(1, 1))}}{predicts properties for input SMILES from a given regression model and evaluates the probability to
+reach a targeted properties space}
+
+\item{\code{model_training(model = "linear_Bayes", params = NA, n_boot = 10,
+  s_boot = 0.85, r_boot = F, parallelize = F)}}{allows to train regression models, define their parameters, request bootstrap approach and CPU parallelization}
+
+\item{\code{qspr_predict(smis = NULL)}}{predicts properties for input SMILES from a given regression model}
+
+\item{\code{set_target(v_propmin, v_propmax)}}{sets the targeted properties space in vectors propmin and propmax}
 }}
 
 \examples{
+\dontrun{
+
+# Load pre-existing data
 data(qspr.data)
+# Define input SMILES
 smis <- paste(qspr.data[,1])
-ty <- qspr.data[,c(2,5)]
+# Define associated properties
+prop <- qspr.data[,c(2,5)]
+# Define training set
 trainidx <- sample(1:nrow(qspr.data), 5000)
-testidx <- (1:nrow(qspr.data))[-trainidx][1:100]
+# Initialize the prediction environment
+# and compute fingerprints/descriptors associated to input SMILES
+qsprpred_env <- QSPRpred()
+qsprpred_env$initenv(smis=smis[trainidx], prop=as.matrix(prop[trainidx,]), v_fnames="graph")
+# Train a regression model with associated parameters,
+# number of bootstrapped datasets without CPUs parallelization
+qsprpred_env$model_training(model="elasticnet",params=list("alpha" = 0.5),n_boot=10,parallelize=F)
 
-data(qsprpred_EG_5k) 
-## same as run => qsprpred_EG_5k <- 
-
-#-----arguments
-#smis: SMILES string set (character vector) for training
-#y: property sets (matrix) for training  
-#v_ymin: minimum value of target properties
-#v_ymax: maximum value of target properties
-#v_descriptor: function transforming SMILES strings to feature matrix 
-#v_fpnames: character vectors indicating finger print used in the descriptor
-#w0: matrix representing prior mean of coeffients in linear regression model
-#V0_inv: matrix representing the prior variance of coeffients in linear regression model
-#a0: numeric value representing the location parameter in gamma prior 
-#b0: numeric value representing the shape parameter in gamma prior 
-#------
-
-predictions <- qsprpred_EG_5k$qspr_predx(smis[testidx])  
+# Predict properties for a test set
+predictions <- qsprpred_env$qspr_predict(smis[-trainidx])
+# Plot the results
 par(mfrow=c(1,2))
-plot(predictions[[1]][1,], ty[testidx,1])
-plot(predictions[[1]][2,], ty[testidx,2])
+plot(predictions[[1]][1,], prop[-trainidx,1], xlab="prediction", ylab="true")
+segments(-100,-100,1000,1000,col=2,lwd=2)
+plot(predictions[[1]][2,], prop[-trainidx,2], xlab="prediction", ylab="true")
+segments(-100,-100,1000,1000,col=2,lwd=2)
 
-#computing the probability which the properties of test structures is in the target range  
-# set the minimal values in 2-d target properties
-qsprpred_EG_5k$ymin <- c(100, 4)
-# set the maximum values in 2-d target properties
-qsprpred_EG_5k$ymin <- c(200, 5.5) 
-# method inverse_predx returns the probability that input SMILES has property in target range
-qsprpred_EG_5k$inverse_predx("c1ccccc1O")
+# Set a targeted properties space
+qsprpred_env$set_target(c(8,100),c(9,200))
+# Predict properties for any input SMILES
+# and their probability to be close to the targeted properties space
+inv_pred <- qsprpred_env$qspr_predict(smis = smis[-trainidx], temp=c(3,3))
+
+See \\code{vignette("tutorial", package = "iqspr")} for further options and details.
+
+}
+
 }
